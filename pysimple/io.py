@@ -79,9 +79,9 @@ def list_hashes(dirpath: str) -> List[str]:
     return [d for d in os.listdir(dirpath) if is_hash(d)]
 
 
-def prefix_filename(filepath: str, prefix: str) -> str:
+def suffix_filename(filepath: str, suffix: str) -> str:
     filepath, fileext = os.path.splitext(filepath)
-    return filepath + prefix + fileext
+    return filepath + suffix + fileext
 
 
 def count_lines(filepath: str, **kwargs) -> int:
