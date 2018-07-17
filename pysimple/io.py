@@ -40,7 +40,7 @@ def write_lines(filepath: str, lines: List[str], report: Callable=silent, **kwar
     report('Write lines into', filepath, '...')
     with open(filepath, **kwargs) as f:
         for line in lines:
-            f.write(line)
+            f.write(line + '\n')
 
 
 def to_tsv(filepath: str, data: pd.DataFrame, report: Callable=silent, **kwargs) -> None:
