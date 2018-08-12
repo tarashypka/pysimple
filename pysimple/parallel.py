@@ -20,7 +20,7 @@ def _tqdm_listener(que: mp.Queue, total: int):
 
 
 def map_reduce(
-        inputs: List, n_workers: int, map_func: Callable, reduce_func: Callable=None,
+        inputs: List, workers: int, map_func: Callable, reduce_func: Callable=None,
         reduce_init=None, **map_func_kwargs):
 
     que = mp.Manager().Queue()
@@ -29,7 +29,7 @@ def map_reduce(
 
     map_func = partial(_map_func_wrapper, map_func=map_func, que=que, **map_func_kwargs)
 
-    with mp.Pool(n_workers) as p:
+    with mp.Pool(workers) as p:
         if isinstance(inputs[0], tuple):
             outputs = p.starmap(map_func, inputs)
         else:
