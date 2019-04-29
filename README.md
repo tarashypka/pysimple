@@ -15,4 +15,6 @@ $ chmod +x install.sh && ./install.sh ENV_NAME
 This will
 
 - create new conda environment at `/usr/local/anaconda/envs/ENV_NAME`;
-- install all dependencies and `pysimple` module into that environment
+- install all requirements into environment;
+- run all tests from `pysimple/tests`;
+- install `pysimple` module into environment
