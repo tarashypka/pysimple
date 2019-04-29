@@ -9,7 +9,7 @@
 
 ```
 $ git clone https://github.com/tarashypka/pysimple.git && cd pysimple
-chmod +x install.sh && ./install.sh ENV_NAME
+$ chmod +x install.sh && ./install.sh ENV_NAME
 ```
 
 This will
