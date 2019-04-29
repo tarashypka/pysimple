@@ -1,4 +1,5 @@
 dill
+numpy
 pandas
 tqdm
 cityhash
