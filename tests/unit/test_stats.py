@@ -21,3 +21,7 @@ class StatsTestCase(unittest.TestCase):
         self.assertAlmostEqual(x_mean, 0.500, delta=0.001)
         self.assertAlmostEqual(x_percentile1, 0.496, delta=0.001)
         self.assertAlmostEqual(x_percentile2, 0.504, delta=0.001)
+
+
+if __name__ == '__main__':
+    unittest.main()

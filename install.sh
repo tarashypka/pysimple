@@ -20,6 +20,15 @@ fi
 
 ${ENV_PATH}/bin/pip install -r ${MODULE_DIR}/requirements.txt
 
-${ENV_PATH}/bin/python -m unittest discover -s ${MODULE_DIR}/tests
+function run_tests
+{
+    echo "${ENV_PATH}/bin/python -m unittest discover -s ${MODULE_DIR}/tests -t ${MODULE_DIR} -v"
+}
+
+TESTS_PASSED=$($(run_tests) 2>&1 | tee /dev/tty | tail -1)
+
+if [[ ${TESTS_PASSED} != "OK" ]]; then
+    exit
+fi
 
 ${ENV_PATH}/bin/pip install ${MODULE_DIR}

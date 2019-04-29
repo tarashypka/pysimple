@@ -17,4 +17,4 @@ This will
 - create new conda environment at `/usr/local/anaconda/envs/ENV_NAME`;
 - install all requirements into environment;
 - run all tests from `pysimple/tests`;
-- install `pysimple` module into environment
+- if all tests passed, then install `pysimple` module into environment
