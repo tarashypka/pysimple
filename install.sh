@@ -4,8 +4,6 @@ ENV_NAME=$1
 MODULE_DIR=$(dirname $0)
 PYTHON_VERSION=3.7
 
-git config --global credential.helper 'cache --timeout=600'
-
 cd ${MODULE_DIR}
 
 ANACONDA=/usr/local/anaconda
