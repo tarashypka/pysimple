@@ -136,3 +136,31 @@ def to_tsv(filepath: Path, data: pd.DataFrame, logger: Logger=silent_logger(), *
         kwargs.setdefault('compression', 'gzip')
     logger.info(f'Dump {len(data)} rows into {filepath} ...')
     data.to_csv(filepath, **kwargs)
+
+
+def suffix_filename(path: Path, suffix: str) -> Path:
+    """Append suffix after filename"""
+    path = plain_path(path)
+    return path.with_name(path.stem + suffix + path.suffix)
+
+
+# Mapping of unpickable attributes in shared memory
+__SHARED__: Dict = None
+
+
+class Serializable:
+    """May be used to pickle class with unpickable attributes, must be inherited"""
+
+    def __init__(self, shared: Dict):
+        global __SHARED__
+        __SHARED__ = shared
+
+    def __getstate__(self):
+        state = dict(self.__dict__)
+        for attr_name, attr_val in __SHARED__.items():
+            del state[attr_name]
+        return state
+
+    def __setstate__(self, state: Dict):
+        self.__dict__.update(state)
+        self.__dict__.update(__SHARED__)
