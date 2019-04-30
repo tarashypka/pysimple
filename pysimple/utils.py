@@ -11,7 +11,7 @@ from cityhash import CityHash64
 from pysimple.io import plain_path
 
 
-def flatten_iter(x: Iterator[Iterator[Any]]) -> Iterator[Any]:
+def flatten_iter(x: Iterator[Iterator]) -> Iterator:
     """Flatten list or set"""
     return (item for items in x for item in items)
 
@@ -21,24 +21,25 @@ def df2dict(data: pd.DataFrame) -> List[Dict[str, Any]]:
     return list(data.T.to_dict().values())
 
 
-def split_list(
-        items: List[Any], splits: List[int]=None, n_splits: int=None, split_size: int=None) -> Iterator[List[Any]]:
+def split_list(items: List, splits: List[int]=None, n_splits: int=None, split_size: int=None) -> Iterator[List]:
     """Split list into sub-lists of equal size or into sub-lists of specific length, preserves order of elements"""
-    items = list(items)
-    n_items = len(items)
-
-    if splits is not None:
-        split_pos = [0] + splits + [n_items]
-    elif n_splits is not None or split_size is not None:
-        all_pos = np.arange(n_items)
-        if split_size is None:
-            split_size = n_items // n_splits
-        split_pos = all_pos[::split_size].tolist() + [n_items]
+    if not items:
+        yield []
     else:
-        raise TypeError('Must pass either splits, or n_splits!')
+        n_items = len(items)
 
-    for _pos, pos_ in zip(split_pos[:-1], split_pos[1:]):
-        yield items[_pos:pos_]
+        if splits is not None:
+            split_pos = [0] + splits + [n_items]
+        elif n_splits is not None or split_size is not None:
+            all_pos = np.arange(n_items)
+            if split_size is None:
+                split_size = np.ceil(n_items / n_splits).astype(int)
+            split_pos = all_pos[::split_size].tolist() + [n_items]
+        else:
+            raise TypeError('Must pass either splits, or n_splits!')
+
+        for _pos, pos_ in zip(split_pos[:-1], split_pos[1:]):
+            yield items[_pos:pos_]
 
 
 def data2batches(

@@ -53,7 +53,7 @@ def console_logger(name: str, prefix: Union[str, Tuple]=None) -> Union[LoggerAda
 def file_logger(
         name: str, log_path: Path, console: bool=False, prefix: Union[str, Tuple]=None) -> Union[LoggerAdapter, Logger]:
     """Simple file logger"""
-    from pyjooble.io import ensure_filedir
+    from pysimple.io import ensure_filedir
     log_path = ensure_filedir(log_path)
     logger = console_logger(name) if console else _default_logger(name)
     formatter = _default_formatter()

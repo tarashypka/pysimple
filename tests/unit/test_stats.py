@@ -5,8 +5,8 @@ import numpy as np
 from pysimple.stats import bootstrap
 
 
-class StatsTestCase(unittest.TestCase):
-    """Test functions in stats module"""
+class BootstrapTestCase(unittest.TestCase):
+    """Test stats.bootstrap() function"""
 
     def setUp(self):
         np.random.seed(37)
@@ -14,8 +14,8 @@ class StatsTestCase(unittest.TestCase):
     def tearDown(self):
         np.random.seed()
 
-    def test_bootstrap_output(self):
-        """Test if bootstrap function returns mean and percentiles as expected"""
+    def test_output_is_valid(self):
+        """Test if bootstrap() returns expected mean and percentiles"""
         x = np.random.random(size=10_000)
         x_mean, x_percentile1, x_percentile2 = bootstrap(x=x, samples=100, percent=10)
         self.assertAlmostEqual(x_mean, 0.500, delta=0.001)

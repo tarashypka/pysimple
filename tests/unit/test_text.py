@@ -5,11 +5,11 @@ import pandas as pd
 from pysimple.text import flatten_text
 
 
-class TextTestCase(unittest.TestCase):
-    """Test functions in text module"""
+class FlattenTextTestCase(unittest.TestCase):
+    """Test text.flatten_text() function"""
 
-    def test_flatten_text_output(self):
-        """Test if flatten_text function returns flattened texts as expected"""
+    def test_output_is_valid(self):
+        """Test if flatten_text() returns expected flattened texts"""
 
         inp2outp = {
             '    ': '',
@@ -31,3 +31,7 @@ class TextTestCase(unittest.TestCase):
             print('\n\nTest failed for next cases:\n', data.loc[~data['valid'], ['inp', 'expected', 'actual']])
 
         self.assertTrue(data['valid'].all())
+
+
+if __name__ == '__main__':
+    unittest.main()
