@@ -3,7 +3,7 @@
 ENV_NAME=$1
 MODULE_DIR=$(dirname $0)
 PYTHON_VERSION=3.7
-ANACONDA_PATH=/usr/local/anaconda
+ANACONDA_PATH=${HOME}/miniconda3
 
 export PATH=${ANACONDA_PATH}/bin:$PATH
 
@@ -31,4 +31,5 @@ if [[ ${TESTS_PASSED} != "OK" ]]; then
     exit
 fi
 
+${ENV_PATH}/bin/pip install -r ${MODULE_DIR}/requirements.txt
 ${ENV_PATH}/bin/pip install ${MODULE_DIR}
