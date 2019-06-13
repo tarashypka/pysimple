@@ -25,6 +25,9 @@ def map_reduce(
         **map_func_kwargs) -> "output of reduce_func or list of map_func outputs":
     """Standard map-reduce routine to parallellize inputs between workers"""
 
+    if not isinstance(inputs[0], tuple):
+        inputs = ((inp,) for inp in inputs)
+
     if workers > 1:
         que: mp.Queue = None
         tqdm_proc: mp.Process = None
@@ -37,10 +40,7 @@ def map_reduce(
             map_func = partial(map_func, **map_func_kwargs)
 
         with mp.Pool(workers) as p:
-            if isinstance(inputs[0], tuple):
-                outputs = p.starmap(map_func, inputs)
-            else:
-                outputs = p.starmap(map_func, ((inp,) for inp in inputs))
+            outputs = p.starmap(map_func, inputs)
 
         if progress_bar:
             que.put(None)
@@ -48,7 +48,7 @@ def map_reduce(
     else:
         if progress_bar:
             inputs = progress_bar(inputs)
-        outputs = [map_func(inp, **map_func_kwargs) for inp in inputs]
+        outputs = [map_func(*inp, **map_func_kwargs) for inp in inputs]
 
     if reduce_func is None:
         return outputs
