@@ -11,8 +11,9 @@ class LoggerAdapter(logging.LoggerAdapter):
 
     def __init__(self, logger: Logger, prefix: Union[str, Tuple]=None):
         super(LoggerAdapter, self).__init__(logger, {})
-        if isinstance(prefix, tuple):
-            prefix = ''.join([f'[{item}]' for item in prefix])
+        if isinstance(prefix, str):
+            prefix = (prefix,)
+        prefix = ''.join([f'[{item}]' for item in prefix])
         self.prefix = prefix
 
     def process(self, msg, kwargs):
