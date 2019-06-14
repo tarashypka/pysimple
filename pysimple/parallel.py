@@ -26,7 +26,7 @@ def map_reduce(
     """Standard map-reduce routine to parallellize inputs between workers"""
 
     if not isinstance(inputs[0], tuple):
-        inputs = ((inp,) for inp in inputs)
+        inputs = [(inp,) for inp in inputs]
 
     if workers > 1:
         que: mp.Queue = None
