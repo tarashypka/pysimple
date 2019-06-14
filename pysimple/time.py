@@ -2,7 +2,7 @@ from time import perf_counter
 
 
 class Stopwatch:
-    """Simple stopwatch to measure elapsed time. May be used both in sync and async."""
+    """Simple stopwatch to measure elapsed time"""
 
     def __init__(self):
         self.started_at_: float = None
