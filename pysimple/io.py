@@ -1,4 +1,5 @@
 import sys
+import shutil
 import json
 import gzip
 import pickle
@@ -36,6 +37,13 @@ def ensure_filedir(filepath: Path) -> Path:
     filepath = plain_path(filepath)
     ensure_dir(filepath.parent)
     return filepath
+
+
+def clear_dir(dir: Path):
+    """Removed everything directory and all its content"""
+    dir = plain_path(dir)
+    shutil.rmtree(dir)
+    dir.mkdir()
 
 
 def read_lines(filepath: Path, logger: Logger=silent_logger(), **kwargs) -> Iterator[str]:
