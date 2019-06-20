@@ -24,6 +24,33 @@ class ChainedAssignment:
         pd.options.mode.chained_assignment = self.previous_
 
 
+class CachedObject:
+    """Context manager that holds object with attribute that may be cached"""
+
+    def __init__(self, obj: object, field: str):
+        self.obj = obj
+        self.field = field
+        self.cache_ = None
+
+    def __enter__(self):
+        self.cache_ = getattr(self.obj, self.field)
+        setattr(self.obj, self.field, None)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        setattr(self.obj, self.field, self.cache_)
+
+    @staticmethod
+    def parse_from(obj: object, field: str):
+        fields = field.split('.')
+        cache_obj = obj
+        cache_name = field
+        for inner_obj, inner_name in zip(fields[:-1], fields[1:]):
+            cache_obj = getattr(cache_obj, inner_obj)
+            cache_name = inner_name
+        return CachedObject(obj=cache_obj, field=cache_name)
+
+
 def ignore_pandas_chained_assignment(func: Callable) -> Callable:
     """Decorator to ignore pandas chained assignment for a while"""
     def func_with_ignored_chained(*args, **kwargs):

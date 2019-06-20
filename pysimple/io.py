@@ -3,6 +3,7 @@ import json
 import gzip
 import pickle
 from collections import defaultdict
+from contextlib import ExitStack
 from logging import Logger
 from pathlib import Path
 from typing import *
@@ -11,6 +12,7 @@ import dill
 import pandas as pd
 
 from pysimple.logging import silent_logger
+from pysimple.sugar import CachedObject
 
 
 # Always represent NaN values with the same identifier
@@ -69,21 +71,25 @@ def load_pickle(filepath: Path, use_dill: bool=False, logger: Logger=silent_logg
         return serializer.load(f)
 
 
-def dump_pickle(filepath: Path, obj: "serializable object", use_dill: bool=False, logger: Logger=silent_logger()):
+def dump_pickle(
+        filepath: Path, obj: "serializable object", use_dill: bool=False, skip_fields: List[str]=None,
+        logger: Logger=silent_logger()):
     """Serialize object with pickle"""
     filepath = ensure_filedir(filepath)
     logger.info(f'Dump data into {filepath} ...')
+    skip_fields = [] if not skip_fields else skip_fields
     protocol = 2 if sys.version_info[0] == 2 else 4
     serializer = dill if use_dill else pickle
     compress = str(filepath).endswith('.gz')
-    file = gzip.open(filepath, mode='wb') if compress else filepath.open(mode='wb')
-    with file as f:
+    with ExitStack() as stack, gzip.open(filepath, mode='wb') if compress else filepath.open(mode='wb') as file:
+        for field in skip_fields:
+            stack.enter_context(CachedObject.parse_from(obj=obj, field=field))
         try:
-            serializer.dump(obj, f, protocol=protocol)
+            serializer.dump(obj, file, protocol=protocol)
         except RecursionError:
             logger.warning('Set recursion limit to 10000!')
             sys.setrecursionlimit(10000)
-            serializer.dump(obj, f, protocol=protocol)
+            serializer.dump(obj, file, protocol=protocol)
 
 
 def from_json(filepath: Path, encoding='utf-8', logger: Logger=silent_logger(), **kwargs):
