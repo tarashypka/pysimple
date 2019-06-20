@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ENV_NAME=$1
-MODULE_DIR=$(dirname $0)
+MODULE_DIR=$(realpath $(dirname $0))
 PYTHON_VERSION=3.7
 ANACONDA_PATH=${HOME}/miniconda3
 
