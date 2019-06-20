@@ -23,7 +23,7 @@ def _tqdm_listener(que: mp.Queue, total: int, bar=tqdm):
 def map_reduce(
         inputs: List, workers: int, map_func: Callable, reduce_func: Callable=None, reduce_init=None, progress_bar=tqdm,
         **map_func_kwargs) -> "output of reduce_func or list of map_func outputs":
-    """Standard map-reduce routine to parallellize inputs between workers"""
+    """Standard map-reduce routine to parallelize inputs between workers"""
 
     if not isinstance(inputs[0], tuple):
         inputs = [(inp,) for inp in inputs]

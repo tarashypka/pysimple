@@ -2,6 +2,7 @@ import sys
 import json
 import gzip
 import pickle
+from collections import defaultdict
 from logging import Logger
 from pathlib import Path
 from typing import *
@@ -145,7 +146,7 @@ def suffix_filename(path: Path, suffix: str) -> Path:
 
 
 # Mapping of unpickable attributes in shared memory
-__SHARED__: Dict = None
+__SHARED__: Dict[int, Dict] = defaultdict(dict)
 
 
 class Serializable:
@@ -153,14 +154,15 @@ class Serializable:
 
     def __init__(self, shared: Dict):
         global __SHARED__
-        __SHARED__ = shared
+        self.id_ = id(self)
+        __SHARED__[self.id_].update(shared)
 
     def __getstate__(self):
         state = dict(self.__dict__)
-        for attr_name, attr_val in __SHARED__.items():
+        for attr_name, attr_val in __SHARED__[self.id_].items():
             del state[attr_name]
         return state
 
     def __setstate__(self, state: Dict):
         self.__dict__.update(state)
-        self.__dict__.update(__SHARED__)
+        self.__dict__.update(__SHARED__[self.id_])
