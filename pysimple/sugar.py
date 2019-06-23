@@ -69,3 +69,12 @@ def warn_deprecated(func: Callable) -> Callable:
             message=f'Function {func.__name__} is deprecated and will be removed later!', category=UserWarning)
         return func(*args, **kwargs)
     return func_with_deprecated_warning
+
+
+def ignore_warnings(func: Callable) -> Callable:
+    """Decorator to ignore all warnings for the moment of function call"""
+    def func_without_warnings(*args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            func(*args, **kwargs)
+    return func_without_warnings
