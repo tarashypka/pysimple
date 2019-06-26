@@ -78,3 +78,19 @@ def ignore_warnings(func: Callable) -> Callable:
             warnings.simplefilter('ignore')
             func(*args, **kwargs)
     return func_without_warnings
+
+
+def with_seaborn(plot_func: Callable) -> Callable:
+    import seaborn as sb
+
+    def reset():
+        sb.reset_orig()
+        sb.set()
+        sb.set_style('whitegrid')
+
+    def plot_func_wrapper(*args, **kwargs):
+        reset()
+        plot_func(*args, **kwargs)
+        reset()
+
+    return plot_func_wrapper
