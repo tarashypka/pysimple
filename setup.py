@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pysimple',
-    version='0.9.0',
+    version='1.0.0',
     description='Utils functions to be used in other projects',
     url='',
     author='Taras Shypka',
