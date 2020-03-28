@@ -53,7 +53,6 @@ if [[ ! -d ${ENV_PATH} ]]; then
     conda create -n ${ENV_NAME} python=${PYTHON_VERSION}
     ENV_INSTALLED=1
 fi
-source ${ANACONDA_PATH}/etc/profile.d/conda.sh
 conda activate ${ENV_NAME}
 
 PIP=${ENV_PATH}/bin/pip
