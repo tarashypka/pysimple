@@ -1,20 +1,16 @@
 # pysimple
 
-
-<i>Utils for other projects ...</i>
+Utils for other projects
 
 
 ## Install
 
-
 ```
-$ git clone https://github.com/tarashypka/pysimple.git && cd pysimple
-$ chmod +x install.sh && ./install.sh --conda=/path/to/anaconda --env=ENV_NAME
+$ chmod +x install.sh && ./install.sh --env=/path/to/python/env
 ```
 
 This will
 
-- create new conda environment at `/path/to/anaconda/envs/ENV_NAME`;
-- install all requirements into environment;
-- run all tests from `pysimple/tests`;
-- if all tests passed, then install `pysimple` module into environment
+- install all requirements into python env
+- run all tests from `pysimple/tests`
+- if all tests passed, then install `pysimple` into python env

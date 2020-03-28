@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
 MODULE_DIR=$(realpath $(dirname $0))
-PYTHON_VERSION=3.7
 
-CONDA_PATH="missing"
-ENV_NAME="missing"
-HELP_MSG="Usage: install.sh --conda=/path/to/conda --env=env_name"
+ENV_PATH="missing"
+HELP_MSG="Usage: install.sh --env=/path/to/python/env"
 
 err() {
     echo
@@ -19,11 +17,7 @@ err() {
 for param in $@; do
   case ${param} in
     --env=*)
-      ENV_NAME=${param#*=}
-      shift
-      ;;
-    --conda=*)
-      CONDA_PATH=${param#*=}
+      ENV_PATH=${param#*=}
       shift
       ;;
     --help)
@@ -32,52 +26,27 @@ for param in $@; do
   esac
 done
 
-if [[ ${CONDA_PATH} == "missing" ]]; then
-  err "Not found --conda argument!"
-fi
-
-if [[ ${ENV_NAME} == "missing" ]]; then
+if [[ ${ENV_PATH} == "missing" ]]; then
   err "Not found --env argument!"
 fi
 
-echo ENV=${ENV_NAME}
-echo CONDA=${CONDA_PATH}
+${ENV_PATH}/bin/pip install -r ${MODULE_DIR}/requirements.txt
 
-export PATH=${CONDA_PATH}/bin:$PATH
+function run_tests {
+    echo "${ENV_PATH}/bin/python -m unittest discover -s ${TESTS_DIR} -t ${TESTS_DIR} -v"
+}
+
+# This way source code will be importable from tests
 export PYTHONPATH=${MODULE_DIR}/src:${PYTHONPATH}
 
-ENV_PATH=${CONDA_PATH}/envs/${ENV_NAME}
-ENV_INSTALLED=0
-if [[ ! -d ${ENV_PATH} ]]; then
-    echo "Create new environment at ${ENV_PATH} ..."
-    conda create -n ${ENV_NAME} python=${PYTHON_VERSION}
-    ENV_INSTALLED=1
-fi
-conda activate ${ENV_NAME}
-
-PIP=${ENV_PATH}/bin/pip
-
-cd ${MODULE_DIR}
-
-${PIP} install -r requirements.txt
-
 TESTS_DIR=${MODULE_DIR}/tests
-if [[ -d ${TESTS_DIR} ]]; then
-    echo "Run tests in ${TESTS_DIR} ..."
-    function run_tests
-    {
-        echo "${ENV_PATH}/bin/python -m unittest discover -s ${TESTS_DIR} -t ${TESTS_DIR} -v"
-    }
-    TESTS_OUTPUT=$($(run_tests) 2>&1 | tee /dev/tty)
-    echo "Run tests in ${TESTS_DIR} ..."
-    if [[ ${TESTS_OUTPUT} =~ "FAILED" ]]; then
-        echo "Tests failed!"
-        if [[ ${ENV_INSTALLED} == 1 ]]; then
-            echo "Remove created at ${ENV_PATH} environment ..."
-            rm -rf ${ENV_PATH}
-        fi
-        exit
-    fi
+
+echo "Run tests in ${TESTS_DIR} ..."
+TESTS_OUTPUT=$($(run_tests) 2>&1 | tee /dev/tty)
+
+if [[ ${TESTS_OUTPUT} =~ "FAILED" ]]; then
+    echo "Tests failed!"
+    exit 1
 fi
 
-${PIP} install ${MODULE_DIR}
+${ENV_PATH}/bin/pip install ${MODULE_DIR}
