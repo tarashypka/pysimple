@@ -20,33 +20,33 @@ from pysimple.sugar import CachedObject
 NAN_IDENTIFIER = 'NA'
 
 
-def plain_path(path: Path) -> Path:
+def plain_path(path: Union[str, Path]) -> Path:
     """Flatten path"""
     return Path(path).expanduser().absolute()
 
 
-def ensure_dir(dirpath: Path) -> Path:
+def ensure_dir(dirpath: Union[str, Path]) -> Path:
     """Ensure that directory exists"""
     dirpath = plain_path(dirpath)
     dirpath.mkdir(parents=True, exist_ok=True)
     return dirpath
 
 
-def ensure_filedir(filepath: Path) -> Path:
+def ensure_filedir(filepath: Union[str, Path]) -> Path:
     """Ensure that file directory exists"""
     filepath = plain_path(filepath)
     ensure_dir(filepath.parent)
     return filepath
 
 
-def clear_dir(dir: Path):
+def clear_dir(dirpath: Union[str, Path]):
     """Removed everything directory and all its content"""
-    dir = plain_path(dir)
-    shutil.rmtree(dir)
+    dirpath = plain_path(dirpath)
+    shutil.rmtree(dirpath)
     dir.mkdir()
 
 
-def read_lines(filepath: Path, logger: Logger=silent_logger(), **kwargs) -> Iterator[str]:
+def read_lines(filepath: Union[str, Path], logger: Logger=silent_logger(), **kwargs) -> Iterator[str]:
     """Read lines from text file"""
     filepath = plain_path(filepath)
     kwargs.setdefault('mode', 'r')
@@ -57,7 +57,7 @@ def read_lines(filepath: Path, logger: Logger=silent_logger(), **kwargs) -> Iter
             yield line.rstrip()
 
 
-def write_lines(filepath: Path, lines: List[str], logger: Logger=silent_logger(), **kwargs) -> None:
+def write_lines(filepath: Union[str, Path], lines: List[str], logger: Logger=silent_logger(), **kwargs):
     """Write lines into text file"""
     filepath = ensure_filedir(filepath)
     kwargs.setdefault('mode', 'w')
@@ -68,7 +68,7 @@ def write_lines(filepath: Path, lines: List[str], logger: Logger=silent_logger()
             f.write(line + '\n')
 
 
-def load_pickle(filepath: Path, use_dill: bool=False, logger: Logger=silent_logger()):
+def load_pickle(filepath: Union[str, Path], use_dill: bool=False, logger: Logger=silent_logger()):
     """Deserialize object with pickle"""
     filepath = plain_path(filepath)
     logger.info(f'Load data from {filepath} ...')
@@ -80,7 +80,7 @@ def load_pickle(filepath: Path, use_dill: bool=False, logger: Logger=silent_logg
 
 
 def dump_pickle(
-        filepath: Path, obj: "serializable object", use_dill: bool=False, skip_fields: List[str]=None,
+        filepath: Union[str, Path], obj: "serializable object", use_dill: bool=False, skip_fields: List[str]=None,
         logger: Logger=silent_logger()):
     """Serialize object with pickle"""
     filepath = ensure_filedir(filepath)
@@ -100,7 +100,7 @@ def dump_pickle(
             serializer.dump(obj, file, protocol=protocol)
 
 
-def from_json(filepath: Path, encoding='utf-8', logger: Logger=silent_logger(), **kwargs):
+def from_json(filepath: Union[str, Path], encoding='utf-8', logger: Logger=silent_logger(), **kwargs):
     """Load dictionary from json file"""
     filepath = plain_path(filepath)
     logger.info(f'Load data from {filepath} ...')
@@ -108,7 +108,7 @@ def from_json(filepath: Path, encoding='utf-8', logger: Logger=silent_logger(), 
         return json.load(f, **kwargs)
 
 
-def to_json(filepath: Path, data: dict, encoding='utf-8', logger: Logger=silent_logger(), **kwargs):
+def to_json(filepath: Union[str, Path], data: dict, encoding='utf-8', logger: Logger=silent_logger(), **kwargs):
     """Dump dictionary into json file"""
     filepath = ensure_filedir(filepath)
     logger.info(f'Dump data to {filepath} ...')
@@ -118,7 +118,7 @@ def to_json(filepath: Path, data: dict, encoding='utf-8', logger: Logger=silent_
         json.dump(data, f, **kwargs)
 
 
-def count_lines(filepath: Path, **kwargs) -> int:
+def count_lines(filepath: Union[str, Path], **kwargs) -> int:
     """Count lines in file"""
     filepath = plain_path(filepath)
     kwargs.setdefault('mode', 'r')
@@ -127,7 +127,7 @@ def count_lines(filepath: Path, **kwargs) -> int:
         return sum(1 for _ in f)
 
 
-def from_tsv(filepath: Path, logger: Logger=silent_logger(), **kwargs) -> pd.DataFrame:
+def from_tsv(filepath: Union[str, Path], logger: Logger=silent_logger(), **kwargs) -> pd.DataFrame:
     """Load table from tsv file"""
     filepath = plain_path(filepath)
     kwargs.setdefault('sep', '\t')
@@ -140,7 +140,7 @@ def from_tsv(filepath: Path, logger: Logger=silent_logger(), **kwargs) -> pd.Dat
     return pd.read_csv(filepath, **kwargs)
 
 
-def to_tsv(filepath: Path, data: pd.DataFrame, logger: Logger=silent_logger(), **kwargs):
+def to_tsv(filepath: Union[str, Path], data: pd.DataFrame, logger: Logger=silent_logger(), **kwargs):
     """Write table into tsv file"""
     filepath = ensure_filedir(filepath)
     kwargs.setdefault('sep', '\t')
@@ -153,7 +153,7 @@ def to_tsv(filepath: Path, data: pd.DataFrame, logger: Logger=silent_logger(), *
     data.to_csv(filepath, **kwargs)
 
 
-def suffix_filename(path: Path, suffix: str) -> Path:
+def suffix_filename(path: Union[str, Path], suffix: str) -> Path:
     """Append suffix after filename"""
     path = plain_path(path)
     return path.with_name(path.stem + suffix + path.suffix)
