@@ -3,9 +3,9 @@
 MODULE_DIR=$(realpath $(dirname $0))
 PYTHON_VERSION=3.7
 
-ANACONDA_PATH="missing"
+CONDA_PATH="missing"
 ENV_NAME="missing"
-HELP_MSG="Usage: install.sh --conda=/path/to/anaconda --env=env_name"
+HELP_MSG="Usage: install.sh --conda=/path/to/conda --env=env_name"
 
 err() {
     echo
@@ -23,7 +23,7 @@ for param in $@; do
       shift
       ;;
     --conda=*)
-      ANACONDA_PATH=${param#*=}
+      CONDA_PATH=${param#*=}
       shift
       ;;
     --help)
@@ -32,7 +32,7 @@ for param in $@; do
   esac
 done
 
-if [[ ${ANACONDA_PATH} == "missing" ]]; then
+if [[ ${CONDA_PATH} == "missing" ]]; then
   err "Not found --conda argument!"
 fi
 
@@ -41,12 +41,12 @@ if [[ ${ENV_NAME} == "missing" ]]; then
 fi
 
 echo ENV=${ENV_NAME}
-echo ANACONDA=${ANACONDA_PATH}
+echo CONDA=${CONDA_PATH}
 
-export PATH=${ANACONDA_PATH}/bin:$PATH
+export PATH=${CONDA_PATH}/bin:$PATH
 export PYTHONPATH=${MODULE_DIR}/src:${PYTHONPATH}
 
-ENV_PATH=${ANACONDA_PATH}/envs/${ENV_NAME}
+ENV_PATH=${CONDA_PATH}/envs/${ENV_NAME}
 ENV_INSTALLED=0
 if [[ ! -d ${ENV_PATH} ]]; then
     echo "Create new environment at ${ENV_PATH} ..."
