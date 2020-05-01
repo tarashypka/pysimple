@@ -25,6 +25,11 @@ def plain_path(path: Union[str, Path]) -> Path:
     return Path(path).expanduser().absolute()
 
 
+def format_path(path: Path, **kwargs) -> Path:
+    """Format placeholders in path"""
+    return Path(str(path).format(**kwargs))
+
+
 def ensure_dir(dirpath: Union[str, Path]) -> Path:
     """Ensure that directory exists"""
     dirpath = plain_path(dirpath)
